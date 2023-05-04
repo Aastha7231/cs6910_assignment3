@@ -87,3 +87,41 @@ def prepareData(dir, lang_1, lang_2):
 input_lang, output_lang, pairs, max_input_length, max_target_length = prepareData(train_path, lang_1, lang_2)
 val_input_lang, val_output_lang, val_pairs, max_input_length_val, max_target_length_val = prepareData(validation_path, lang_1, lang_2)
 test_input_lang, test_output_lang, test_pairs, max_input_length_test, max_target_length_test = prepareData(test_path, lang_1, lang_2)
+
+
+class EncoderRNN(nn.Module):
+    def __init__(self, input_size, configuration):
+        super(EncoderRNN, self).__init__()
+
+        self.embedding_size = configuration['embedding_size']
+        self.bidirectional = configuration['bi_directional']
+        self.batch_size = configuration['batch_size']
+        self.hidden_size = configuration['hidden_size']
+
+        self.dropout = nn.Dropout(configuration['drop_out'])
+        self.embedding = nn.Embedding(input_size, self.embedding_size)
+
+        self.cell_layer = None
+        self.cell_type = configuration["cell_type"]
+        if self.cell_type == 'RNN':
+            self.cell_layer = nn.RNN(self.embedding_size, self.hidden_size, num_layers = configuration["num_layers_encoder"], dropout = configuration['drop_out'], bidirectional = configuration['bi_directional'])
+        if self.cell_type == 'GRU':
+            self.cell_layer = nn.GRU(self.embedding_size, self.hidden_size, num_layers = configuration["num_layers_encoder"], dropout = configuration['drop_out'], bidirectional = configuration['bi_directional'])
+        if self.cell_type == 'LSTM':
+            self.cell_layer = nn.LSTM(self.embedding_size, self.hidden_size, num_layers = configuration["num_layers_encoder"], dropout = configuration['drop_out'], bidirectional = configuration['bi_directional'])
+ 
+    def forward(self, input, hidden):
+        embedded = self.dropout(self.embedding(input).view(1,self.batch_size, -1))
+        output = embedded
+        output, hidden = self.cell_layer(output, hidden)
+        return output, hidden
+
+    def initHidden(self , num_layers):
+        if (self.bidirectional==False):
+            res = torch.zeros(num_layers, self.batch_size, self.hidden_size)
+        else:
+            res = torch.zeros(num_layers*2, self.batch_size, self.hidden_size)
+        if use_cuda : 
+            return res.cuda()
+        else :
+            return res
