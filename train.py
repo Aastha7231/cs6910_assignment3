@@ -125,3 +125,50 @@ class EncoderRNN(nn.Module):
             return res.cuda()
         else :
             return res
+        
+
+class DecoderRNN(nn.Module):
+    def __init__(self, configuration,  output_size):
+        super(DecoderRNN, self).__init__()
+
+        self.embedding_size = configuration['embedding_size']
+        self.bidirectional = configuration['bi_directional']
+        self.hidden_size = configuration['hidden_size']
+        self.batch_size = configuration['batch_size']
+
+        self.embedding = nn.Embedding(output_size, self.embedding_size)
+        self.dropout = nn.Dropout(configuration['drop_out'])
+
+        self.cell_layer = None
+        self.cell_type = configuration["cell_type"]
+        if self.cell_type == 'RNN':
+            self.cell_layer = nn.RNN(self.embedding_size, self.hidden_size, num_layers = configuration["num_layers_decoder"], dropout = configuration["drop_out"], bidirectional = configuration["bi_directional"])
+        if self.cell_type == 'GRU':
+            self.cell_layer =   nn.GRU(self.embedding_size, self.hidden_size, num_layers = configuration["num_layers_decoder"], dropout = configuration["drop_out"], bidirectional = configuration["bi_directional"])
+        if self.cell_type == 'LSTM':
+            self.cell_layer = nn.LSTM(self.embedding_size, self.hidden_size, num_layers = configuration["num_layers_decoder"], dropout = configuration["drop_out"], bidirectional = configuration["bi_directional"])
+        
+        if (self.bidirectional==False):
+            self.out = nn.Linear(self.hidden_size , output_size)
+        else:
+            self.out = nn.Linear(self.hidden_size*2 , output_size)
+        self.softmax = nn.LogSoftmax(dim=1)
+
+    def forward(self, input, hidden):
+        
+        output = self.dropout(self.embedding(input).view(1,self.batch_size, -1))
+        output = F.relu(output)
+        output, hidden = self.cell_layer(output, hidden)
+        
+        output = self.softmax(self.out(output[0]))
+        return output, hidden
+
+    def initHidden(self):
+        if (self.bidirectional==False):
+            res = torch.zeros(self.num_layers_decoder , self.batch_size, self.hidden_size)
+        else:
+            res = torch.zeros(self.num_layers_decoder*2 , self.batch_size, self.hidden_size)
+        if use_cuda : 
+            return res.cuda()
+        else :
+            return res
