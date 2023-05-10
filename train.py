@@ -28,6 +28,7 @@ validation_path = os.path.join(dir, lang_2, lang_2 + '_valid.csv')
 test_path = os.path.join(dir, lang_2, lang_2 + '_test.csv')
 
 
+
 class Lang:
     def __init__(self, name):
         self.name = name
