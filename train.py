@@ -172,3 +172,18 @@ class DecoderRNN(nn.Module):
             return res.cuda()
         else :
             return res
+        
+def indexesFromWord(lang, word):
+    return [lang.char2index[char] for char in word]
+
+
+def variableFromSentence(lang, word, max_length):
+    indexes = indexesFromWord(lang, word)
+    indexes.append(EOS_token)
+    indexes.extend([PAD_token] * (max_length - len(indexes)))
+    result = torch.LongTensor(indexes)
+    if use_cuda:
+        return result.cuda()
+    else:
+        return result
+
