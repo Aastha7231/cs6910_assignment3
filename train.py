@@ -187,3 +187,12 @@ def variableFromSentence(lang, word, max_length):
     else:
         return result
 
+def variablesFromPairs(input_lang, output_lang, pairs, max_length):
+    res = []
+    i=0
+    while(i < len(pairs)):
+        input_variable = variableFromSentence(input_lang, pairs[i][0], max_length)
+        output_variable = variableFromSentence(output_lang, pairs[i][1], max_length)
+        res.append((input_variable, output_variable))
+        i+=1
+    return res
