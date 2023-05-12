@@ -322,3 +322,38 @@ def evaluate(encoder, decoder, loader, configuration, criterion , max_length, ou
         accuracy = (correct/total)*100
         loss += batch_loss.item()/target_length
     return accuracy, loss
+
+def trainIters(encoder, decoder, train_loader, val_loader, configuration, max_len, max_len_all, output_lang):
+
+    encoder_optimizer = optim.NAdam(encoder.parameters(),lr=configuration['learning_rate'])
+    decoder_optimizer = optim.NAdam(decoder.parameters(),lr=configuration['learning_rate'])
+
+    criterion = nn.NLLLoss()
+    
+    ep = 10
+
+    i=0
+    while(i < (ep)) :
+        print('ep : ',i)
+        train_loss = 0
+        print('training..')
+        batch_no = 1
+        for batchx, batchy in train_loader:
+            loss = None
+
+            if configuration['attention'] == False:
+                loss = train(batchx, batchy, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, configuration, max_len_all)
+            
+            train_loss += loss
+            batch_no+=1
+
+        print('train loss :', train_loss/len(train_loader))
+        validation_accuracy , validation_loss= evaluate(encoder, decoder, val_loader, configuration, criterion, max_len, output_lang)
+        print('validation loss :', validation_loss/len(val_loader))
+        print("val_accuracy : ",validation_accuracy)
+        i+=1
+        wandb.log({'validation_loss': validation_loss/len(val_loader), 'validation_accuracy': validation_accuracy, 'train_loss': train_loss/len(train_loader)})
+            
+    # test_acc = evaluate(encoder, decoder, test_loader, configuration, criterion)
+    # print("test_accuracy : ",test_acc)
+
