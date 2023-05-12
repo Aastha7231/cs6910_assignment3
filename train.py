@@ -259,3 +259,66 @@ def train(input_tensor, output_tensor, encoder, decoder, encoder_optimizer, deco
     decoder_optimizer.step()
 
     return loss.item() / output_length
+
+
+def evaluate(encoder, decoder, loader, configuration, criterion , max_length, output_lang):
+
+    batch_size = configuration['batch_size']
+    loss = 0
+    total = 0
+    correct = 0
+    
+    for batch_x, batch_y in loader:
+        batch_loss = 0
+        
+        encoder_hidden = encoder.initHidden(configuration['num_layers_encoder'])
+        if configuration["cell_type"] == "LSTM":
+                    encoder_cell_state = encoder.initHidden(configuration['num_layers_encoder'])
+                    encoder_hidden = (encoder_hidden, encoder_cell_state)
+
+        input_variable = Variable(batch_x.transpose(0, 1))
+        output_variable = Variable(batch_y.transpose(0, 1))
+        
+        input_length = input_variable.size()[0]
+        target_length = output_variable.size()[0]
+
+        output = torch.LongTensor(target_length, batch_size)
+
+        encoder_outputs = Variable(torch.zeros(max_length, batch_size, encoder.hidden_size))
+        encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
+        
+        i=0
+        while(i < (input_length)) :
+            encoder_output, encoder_hidden = encoder(input_variable[i], encoder_hidden)
+            i+=1
+
+        decoder_input = Variable(torch.LongTensor([SOS_token] * batch_size))
+        decoder_input = decoder_input.cuda() if use_cuda else decoder_input
+
+        decoder_hidden = encoder_hidden
+        j=0
+        while(j < (target_length)) :
+            decoder_output, decoder_hidden = decoder(decoder_input, decoder_hidden)
+
+            batch_loss += criterion(decoder_output, output_variable[j].squeeze())
+
+            topv, topi = decoder_output.data.topk(1)
+            decoder_input = torch.cat(tuple(topi))
+            output[j] = torch.cat(tuple(topi))
+            j+=1
+
+        output = output.transpose(0,1)
+
+        k=0
+        while(k < (output.size()[0])):
+            ignore = [SOS_token, EOS_token, PAD_token]
+            sent = [output_lang.index2char[letter.item()] for letter in output[k] if letter not in ignore]
+            y = [output_lang.index2char[letter.item()] for letter in batch_y[k] if letter not in ignore]
+            # print(sent,' ',y)
+            if sent == y:
+                correct += 1
+            total += 1
+            k+=1
+        accuracy = (correct/total)*100
+        loss += batch_loss.item()/target_length
+    return accuracy, loss
