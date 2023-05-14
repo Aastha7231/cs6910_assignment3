@@ -174,8 +174,17 @@ class DecoderRNN(nn.Module):
         else :
             return res
         
+
 def indexesFromWord(lang, word):
-    return [lang.char2index[char] for char in word]
+    index_list = []
+    i=0
+    while(i < len(word)):
+        if word[i] in lang.char2index.keys():
+            index_list.append(lang.char2index[word[i]])
+        else:
+            index_list.append(UNK_token)
+        i += 1
+    return index_list
 
 
 def variableFromSentence(lang, word, max_length):
