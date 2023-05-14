@@ -425,4 +425,61 @@ def sweepfunction():
             trainIters(encoder1, decoder1, train_loader, val_loader, configuration, max_len, max_len_all, output_lang)
 
 
-wandb.agent(sweep_id, sweepfunction, count = 50)
+# wandb.agent(sweep_id, sweepfunction, count = 50)
+
+def final_run():
+    
+        configuration = {
+            "hidden_size" : 512,
+            "input_lang" : 'eng',
+            "output_lang" : 'hin',
+            "cell_type"   : 'LSTM',
+            "num_layers_encoder" : 3 ,
+            "num_layers_decoder" : 3,
+            "drop_out"    : 0, 
+            "embedding_size" : 64,
+            "bi_directional" : True,
+            "batch_size" : 128,
+            "attention" : False ,
+            "learning_rate" : 0.001,
+    
+        }
+        
+        train_path = os.path.join(dir, lang_2, lang_2 + '_train.csv')
+        validation_path = os.path.join(dir, lang_2, lang_2 + '_valid.csv')
+        test_path = os.path.join(dir, lang_2, lang_2 + '_test.csv')
+        
+        input_lang, output_lang, pairs, max_input_length, max_target_length = prepareData(train_path, lang_1, lang_2)
+        val_input_lang, val_output_lang, val_pairs, max_input_length_val, max_target_length_val = prepareData(validation_path, lang_1, lang_2)
+        test_input_lang, test_output_lang, test_pairs, max_input_length_test, max_target_length_test = prepareData(test_path, lang_1, lang_2)
+        print(random.choice(pairs))
+
+        max_list = [max_input_length, max_target_length, max_input_length_val, max_target_length_val, max_input_length_test, max_target_length_test]
+
+        max_len_all = 0
+        for i in range(len(max_list)):
+            if(max_list[i] > max_len_all):
+                max_len_all = max_list[i]
+        max_len_all+=1
+
+        pairs = variablesFromPairs(input_lang, output_lang, pairs, max_len_all)
+        val_pairs = variablesFromPairs(input_lang, output_lang, val_pairs, max_len_all)
+        test_pairs = variablesFromPairs(input_lang, output_lang, test_pairs, max_len_all)
+
+        encoder1 = EncoderRNN(input_lang.n_chars, configuration)
+        decoder1 = DecoderRNN(configuration, output_lang.n_chars)
+        
+        if use_cuda:
+            encoder1=encoder1.cuda()
+            decoder1=decoder1.cuda()
+
+        train_loader = torch.utils.data.DataLoader(pairs, batch_size = configuration['batch_size'], shuffle=True)
+        val_loader = torch.utils.data.DataLoader(val_pairs, batch_size = configuration['batch_size'], shuffle=True)
+        test_loader = torch.utils.data.DataLoader(test_pairs, batch_size = configuration['batch_size'], shuffle=True)
+        print("done")
+        if configuration['attention'] == False :
+            trainIters(encoder1, decoder1, train_loader, val_loader,test_loader, configuration, max_len_all, output_lang)
+        else:
+            trainIters(encoder1, decoder1, train_loader, val_loader,test_loader, configuration, max_len_all, output_lang)
+
+final_run()
