@@ -366,3 +366,63 @@ def trainIters(encoder, decoder, train_loader, val_loader, configuration, max_le
     # test_acc = evaluate(encoder, decoder, test_loader, configuration, criterion)
     # print("test_accuracy : ",test_acc)
 
+
+def sweepfunction():
+    config = None
+    with wandb.init(config = config, entity = 'cs22m005') as run:
+        config = wandb.config
+        run.name='hl_'+str(config.hidden_size)+'_bs_'+str(config.batch_size)+'_ct_'+config.cell_type
+        configuration = {
+            "hidden_size" : config.hidden_size,
+            "input_lang" : 'eng',
+            "output_lang" : 'hin',
+            "cell_type"   : config.cell_type,
+            "num_layers_encoder" : config.num_layers_encoder ,
+            "num_layers_decoder" : config.num_layers_encoder,
+            "drop_out"    : config.drop_out, 
+            "embedding_size" : config.embedding_size,
+            "bi_directional" : config.bidirectional,
+            "batch_size" : config.batch_size,
+            "attention" : False ,
+            "learning_rate" : config.learning_rate
+    
+        }
+        
+        train_path = os.path.join(dir, lang_2, lang_2 + '_train.csv')
+        validation_path = os.path.join(dir, lang_2, lang_2 + '_valid.csv')
+        test_path = os.path.join(dir, lang_2, lang_2 + '_test.csv')
+        
+        input_lang, output_lang, pairs, max_input_length, max_target_length = prepareData(train_path, lang_1, lang_2)
+        val_input_lang, val_output_lang, val_pairs, max_input_length_val, max_target_length_val = prepareData(validation_path, lang_1, lang_2)
+        test_input_lang, test_output_lang, test_pairs, max_input_length_test, max_target_length_test = prepareData(test_path, lang_1, lang_2)
+        print(random.choice(pairs))
+
+        max_list = [max_input_length, max_target_length, max_input_length_val, max_target_length_val, max_input_length_test, max_target_length_test]
+
+        max_len_all = 0
+        for i in range(len(max_list)):
+            if(max_list[i] > max_len_all):
+                max_len_all = max_list[i]
+
+        max_len = max(max_input_length, max_target_length) + 2
+
+        
+        pairs = variablesFromPairs(input_lang, output_lang, pairs, max_len)
+        val_pairs = variablesFromPairs(input_lang, output_lang, val_pairs, max_len_all)
+        # test_pairs = variablesFromPairs(input_lang, output_lang, test_pairs, max_len_all)
+
+        encoder1 = EncoderRNN(input_lang.n_chars, configuration)
+        decoder1 = DecoderRNN(configuration, output_lang.n_chars)
+        if use_cuda:
+            encoder1=encoder1.cuda()
+            decoder1=decoder1.cuda()
+
+        train_loader = torch.utils.data.DataLoader(pairs, batch_size=configuration['batch_size'], shuffle=True)
+        val_loader = torch.utils.data.DataLoader(val_pairs, batch_size=configuration['batch_size'], shuffle=True)
+        # test_loader = torch.utils.data.DataLoader(test_pairs, batch_size=configuration['batch_size'], shuffle=True)
+        print("done")
+        if configuration['attention'] == False :
+            trainIters(encoder1, decoder1, train_loader, val_loader, configuration, max_len, max_len_all, output_lang)
+
+
+wandb.agent(sweep_id, sweepfunction, count = 50)
