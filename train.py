@@ -332,6 +332,19 @@ def evaluate(encoder, decoder, loader, configuration, criterion , max_length, ou
         loss += batch_loss.item()/target_length
     return accuracy, loss
 
+def test_accuracy(encoder, decoder,decoder_attn, test_loader, configuration, criterion,max_len_all, output_lang, input_lang):
+
+    test_acc, test_loss, test_output = evaluate_testset(encoder, decoder,decoder_attn, test_loader, configuration, criterion,max_len_all,output_lang, input_lang)
+    print("Test_accuracy : ",test_acc)
+    print("Test_loss : ",test_loss/len(test_loader))
+    print()
+    print("--------------------***------------------------")
+    fields = ['input','prediction','output']
+    df=pd.DataFrame(test_output)
+    df.to_csv('predictions_vanilla.csv', sep = ',', index= 'false', header = fields)
+    for k in range(len(test_output)):
+        print(test_output[k])
+
 def trainIters(encoder, decoder, train_loader, val_loader, configuration, max_len, max_len_all, output_lang):
 
     encoder_optimizer = optim.NAdam(encoder.parameters(),lr=configuration['learning_rate'])
