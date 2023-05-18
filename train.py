@@ -60,48 +60,48 @@ PAD_token = 4
 
 dir = '/kaggle/input/dataset/aksharantar_sampled'
 
-sweep_config ={
-    'method':'bayes'
-}
+# sweep_config ={
+#     'method':'bayes'
+# }
 
-metric = {
-    'name' : 'validation_accuracy',
-    'goal' : 'maximize'
-}
-sweep_config['metric'] = metric
+# metric = {
+#     'name' : 'validation_accuracy',
+#     'goal' : 'maximize'
+# }
+# sweep_config['metric'] = metric
 
-parameters_dict={
-    'hidden_size':{
-        'values' : [128,256,512]
-    },
-    'learning_rate':{
-        'values' : [1e-2,1e-3]
-    },
-    'cell_type':{
-        'values' : ['LSTM','RNN','GRU']
-    },
-    'num_layers_encoder':{
-        'values' : [1,2,3]
-    },
-    'num_layers_decoder':{
-        'values' : [1,2,3]
-    },
-    'drop_out':{
-        'values' : [0.0,0.2,0.3]
-    },
-    'embedding_size':{
-        'values' : [64,128,256,512]
-    },
-    'batch_size':{
-        'values' : [32,64,128]
-    },
-    'bidirectional':{
-        'values' : [True,False]
-    }
-}
-sweep_config['parameters'] = parameters_dict
+# parameters_dict={
+#     'hidden_size':{
+#         'values' : [128,256,512]
+#     },
+#     'learning_rate':{
+#         'values' : [1e-2,1e-3]
+#     },
+#     'cell_type':{
+#         'values' : ['LSTM','RNN','GRU']
+#     },
+#     'num_layers_encoder':{
+#         'values' : [1,2,3]
+#     },
+#     'num_layers_decoder':{
+#         'values' : [1,2,3]
+#     },
+#     'drop_out':{
+#         'values' : [0.0,0.2,0.3]
+#     },
+#     'embedding_size':{
+#         'values' : [64,128,256,512]
+#     },
+#     'batch_size':{
+#         'values' : [32,64,128]
+#     },
+#     'bidirectional':{
+#         'values' : [True,False]
+#     }
+# }
+# sweep_config['parameters'] = parameters_dict
 
-sweep_id = wandb.sweep(sweep_config, project = 'dlasg3')
+# sweep_id = wandb.sweep(sweep_config, project = 'dlasg3')
 
 
 class Lang:
@@ -618,7 +618,7 @@ def trainIters(encoder, decoder,decoder_attn, train_loader, val_loader,test_load
         print('validation loss :', validation_loss/len(val_loader))
         print("val_accuracy : ",validation_accuracy)
         i+=1
-        wandb.log({'validation_loss': validation_loss/len(val_loader), 'validation_accuracy': validation_accuracy, 'train_loss': train_loss/len(train_loader)})
+#         wandb.log({'validation_loss': validation_loss/len(val_loader), 'validation_accuracy': validation_accuracy, 'train_loss': train_loss/len(train_loader)})
         print()
     print("--------------------***------------------------")
     test_accuracy(encoder, decoder, decoder_attn, test_loader, configuration, criterion, max_len_all, output_lang, input_lang)
