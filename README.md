@@ -19,12 +19,12 @@ Assignment 3 of the course CS6910: Fundamentals of Deep Learning offered at IIT 
                 "cell_type"   : 'LSTM',\
                 "num_layers_encoder" : 2,\
                 "num_layers_decoder" : 2,\
-                "drop_out"    : 0.2,\ 
-                "embedding_size" : 128,\
+                 "embedding_size" : 128,\
                 "bi_directional" : True,\
                 "batch_size" : 32,\
                 "attention" : False ,\
                 "learning_rate" : 0.001,\
+                "drop_out" : 0.2,\
          }
 * The function evaluate_testset is run to find test accuracy for best model configuration.
 * The best accuracy obtained on validation set is - 38.94% 
