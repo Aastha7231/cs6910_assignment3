@@ -13,18 +13,18 @@ Assignment 3 of the course CS6910: Fundamentals of Deep Learning offered at IIT 
 ### Evaluate the Best Model
 * After running the sweep with and without attention as mentioned in the report the best configuration obtained is :\
    configuration = {\
-            \t  "hidden_size" : 512,\
-            \t "input_lang" : 'eng',\
-            \t "output_lang" : 'hin',\
-            \t "cell_type"   : 'LSTM',\
-            \t "num_layers_encoder" : 2,\
-            \t "num_layers_decoder" : 2,\
-            \t "drop_out"    : 0.2,\ 
-            \t "embedding_size" : 128,\
-            \t "bi_directional" : True,\
-            \t "batch_size" : 32,\
-            \t "attention" : False ,\
-            \t "learning_rate" : 0.001,\
+             |   "hidden_size" : 512,\
+             |   "input_lang" : 'eng',\
+             |   "output_lang" : 'hin',\
+             |   "cell_type"   : 'LSTM',\
+             |   "num_layers_encoder" : 2,\
+             |   "num_layers_decoder" : 2,\
+             |   "drop_out"    : 0.2,\ 
+             |   "embedding_size" : 128,\
+             |   "bi_directional" : True,\
+             |   "batch_size" : 32,\
+             |   "attention" : False ,\
+             |   "learning_rate" : 0.001,\
          }
 * The best accuracy obtained on validation set is - 38.94% 
 * The best accuracu obtained on test dataset is -36.92%  and loss - 0.3086
