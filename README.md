@@ -10,7 +10,7 @@ Assignment 3 of the course CS6910: Fundamentals of Deep Learning offered at IIT 
 * The train function returns the loss after training the model at each epoch.
 * The model is then evaluated on the validation dataset using the evaluate function at each epoch.
 
-### Evaluate the Best Model
+## Evaluate the Best Model
 * After running the sweep with and without attention as mentioned in the report the best configuration obtained is :\
    configuration = {\
                 "hidden_size" : 512,\
@@ -30,8 +30,8 @@ Assignment 3 of the course CS6910: Fundamentals of Deep Learning offered at IIT 
 * The best accuracy obtained on validation set is - 38.94% 
 * The best accuracy obtained on test dataset is -36.92%  and loss - 0.3086
 
-### Predictions_Vanilla
+## Predictions_Vanilla
 The folder predictions_vanilla contains a file predictions_vanilla.csv that contains the input words, predicted words in hindi and also the actual output in hindi for the english word. This is obtained when the code is executed without attention.
 
-#### Predictions_attention
+## Predictions_attention
 The folder predictions_attention contains a file predictions_attention.csv that contains the input words, predicted words in hindi and also the actual output in hindi for the english word. This is obtained when the code is executed with attention.
