@@ -12,39 +12,39 @@ import numpy as np
 import argparse
 import csv
 
-# parser=argparse.ArgumentParser()
+parser=argparse.ArgumentParser()
 
-# parser.add_argument('-wp',      '--wandb_project',      help='project name in wandb',                                                    type=str,       default='dlasg3'    )
-# parser.add_argument('-we',      '--wandb_entity',       help='entity name in wandb',                                                     type=str,       default='cs22m005'  )
-# parser.add_argument('-bd',      '--bidirectional',      help='bidirectional',                   choices=[True,False],                    type=bool,      default=True        )
-# parser.add_argument('-at',      '--attention',          help='attention',                       choices=[True,False],                    type=bool,      default=False       )
-# parser.add_argument('-b',       '--batch_size',         help='batch sizes',                     choices=[32,64,128],                     type=int,       default=128         )
-# parser.add_argument('-lr',      '--learning_rate',      help='learning rates',                  choices=[1e-2,1e-3],                     type=float,     default=1e-3        )
-# parser.add_argument('-sz',      '--hidden_size',        help='hidden layer size',               choices=[128,256,512],                   type=int,       default=512         )
-# parser.add_argument('-il',      '--input_lang',         help='input language',                  choices=['eng'],                         type=str,       default='eng'       )
-# parser.add_argument('-do',      '--drop_out',           help='drop out',                        choices=[0.0,0.2,0.3],                   type=float,     default=0           )
-# parser.add_argument('-nle',     '--num_layers_en',      help='layers in encoder',               choices=[1,2,3],                         type=int,       default=3           )
-# parser.add_argument('-nld',     '--num_layers_dec',     help='layers in decoder',               choices=[1,2,3],                         type=int,       default=3           )
-# parser.add_argument('-es',      '--embedding_size',     help='embedding size',                  choices=[64,128,256],                    type=int,       default=64          )
-# parser.add_argument('-ol',      '--output_lang',        help='output language',                 choices=['hin','tel'],                   type=str,       default='hin'       )
-# parser.add_argument('-ct',      '--cell_type',          help='cell type',                       choices=['LSTM','GRU','RNN'],            type=str,       default='LSTM'      )
+parser.add_argument('-wp',      '--wandb_project',      help='project name in wandb',                                                    type=str,       default='dlasg3'    )
+parser.add_argument('-we',      '--wandb_entity',       help='entity name in wandb',                                                     type=str,       default='cs22m005'  )
+parser.add_argument('-bd',      '--bidirectional',      help='bidirectional',                   choices=[True,False],                    type=bool,      default=True        )
+parser.add_argument('-at',      '--attention',          help='attention',                       choices=[True,False],                    type=bool,      default=False       )
+parser.add_argument('-b',       '--batch_size',         help='batch sizes',                     choices=[32,64,128],                     type=int,       default=128         )
+parser.add_argument('-lr',      '--learning_rate',      help='learning rates',                  choices=[1e-2,1e-3],                     type=float,     default=1e-3        )
+parser.add_argument('-sz',      '--hidden_size',        help='hidden layer size',               choices=[128,256,512],                   type=int,       default=512         )
+parser.add_argument('-il',      '--input_lang',         help='input language',                  choices=['eng'],                         type=str,       default='eng'       )
+parser.add_argument('-do',      '--drop_out',           help='drop out',                        choices=[0.0,0.2,0.3],                   type=float,     default=0           )
+parser.add_argument('-nle',     '--num_layers_en',      help='layers in encoder',               choices=[1,2,3],                         type=int,       default=3           )
+parser.add_argument('-nld',     '--num_layers_dec',     help='layers in decoder',               choices=[1,2,3],                         type=int,       default=3           )
+parser.add_argument('-es',      '--embedding_size',     help='embedding size',                  choices=[64,128,256],                    type=int,       default=64          )
+parser.add_argument('-ol',      '--output_lang',        help='output language',                 choices=['hin','tel'],                   type=str,       default='hin'       )
+parser.add_argument('-ct',      '--cell_type',          help='cell type',                       choices=['LSTM','GRU','RNN'],            type=str,       default='LSTM'      )
 
-# args=parser.parse_args()
+args=parser.parse_args()
 
-# project_name          = args.wandb_project
-# entity_name           = args.wandb_entity
-# num_layers_encoder    = args.num_layers_en
-# num_layers_decoder    = args.num_layers_dec
-# embedding_size        = args.embedding_size
-# bidirectional         = args.bidirectional
-# batch_size            = args.batch_size
-# learning_rate         = args.learning_rate
-# hidden_size           = args.hidden_size
-# input_lang            = args.input_lang
-# output_lang           = args.output_lang
-# cell_type             = args.cell_type
-# drop_out              = args.drop_out
-# attention             = args.attention
+project_name          = args.wandb_project
+entity_name           = args.wandb_entity
+num_layers_encoder    = args.num_layers_en
+num_layers_decoder    = args.num_layers_dec
+embedding_size        = args.embedding_size
+bidirectional         = args.bidirectional
+batch_size            = args.batch_size
+learning_rate         = args.learning_rate
+hidden_size           = args.hidden_size
+input_lang            = args.input_lang
+output_lang           = args.output_lang
+cell_type             = args.cell_type
+drop_out              = args.drop_out
+attention             = args.attention
 
 
 use_cuda = torch.cuda.is_available()
@@ -59,6 +59,7 @@ UNK_token = 3
 PAD_token = 4
 
 dir = '/kaggle/input/dataset/aksharantar_sampled'
+# sweep configuration used to run sweep
 
 # sweep_config ={
 #     'method':'bayes'
@@ -103,7 +104,7 @@ dir = '/kaggle/input/dataset/aksharantar_sampled'
 
 # sweep_id = wandb.sweep(sweep_config, project = 'dlasg3')
 
-
+# class lang is referred from theblog given in assignment and is used for data preprocessing
 class Lang:
     def __init__(self, name):
         self.name = name
@@ -111,13 +112,13 @@ class Lang:
         self.char2count = {}
         self.n_chars = 4
         self.index2char = {0: '<', 1: '>',2 : '?', 3:'.'}
-        
+      
     def addWord(self, word):
         i=0
         while(i< len(word)):
             self.addChar(word[i])
             i+=1
-
+    # this function stores the count of each character its index number and char corresponding to index number
     def addChar(self, char):
         if char in self.char2index:
             self.char2count[char] += 1
@@ -127,10 +128,11 @@ class Lang:
             self.char2index[char] = self.n_chars
             self.n_chars += 1
 
+# this functon is used to create pairse of input and output word
 def prepareData(dir, lang_1, lang_2):
 
     data = pd.read_csv(dir, sep=",", names=['input', 'output'])
-
+    # object of input and output class
     input_lang = Lang(lang_1)
     output_lang = Lang(lang_2)
 
@@ -159,11 +161,12 @@ def prepareData(dir, lang_1, lang_2):
     print(output_lang.name, max_output_length)
     return input_lang, output_lang, pairs, max_input_length, max_output_length
 
-
+# class encoder takes as input the english word converted into a tensor and then embedding is done on the output tensor and then it is  given to
+# hidden layer and the output of the hidden layer is given to next hidden layer 
 class EncoderRNN(nn.Module):
     def __init__(self, input_size, configuration):
         super(EncoderRNN, self).__init__()
-
+        # parameter initializations
         self.embedding_size = configuration['embedding_size']
         self.bidirectional = configuration['bi_directional']
         self.batch_size = configuration['batch_size']
@@ -180,13 +183,16 @@ class EncoderRNN(nn.Module):
             self.cell_layer = nn.GRU(configuration['embedding_size'], configuration['hidden_size'], num_layers = configuration["num_layers_encoder"], dropout = configuration['drop_out'], bidirectional = configuration['bi_directional'])
         if self.cell_type == 'LSTM':
             self.cell_layer = nn.LSTM(configuration['embedding_size'], configuration['hidden_size'], num_layers = configuration["num_layers_encoder"], dropout = configuration['drop_out'], bidirectional = configuration['bi_directional'])
- 
+    #the input tensor is converted to embedding size by passing it to encoding
+    #then drop out is applied to the tensor produced
     def forward(self, input, hidden):
         embedded = self.dropout(self.embedding(input).view(1,self.batch_size, -1))
         output = embedded
+        # the result is passed to the respective cell layer
         output, hidden = self.cell_layer(output, hidden)
         return output, hidden
-
+    
+    # if bidirection is applied then changing the dimension taking the average and passing that as output
     def initHidden(self , num_layers):
         if (self.bidirectional==False):
             res = torch.zeros(num_layers, self.batch_size, self.hidden_size)
@@ -197,6 +203,7 @@ class EncoderRNN(nn.Module):
         else :
             return res
 
+# decoder class to take input as the output of the encoder and the produce one character at a time as output
 class DecoderRNN(nn.Module):
     def __init__(self, configuration,  output_size):
         super(DecoderRNN, self).__init__()
@@ -223,16 +230,18 @@ class DecoderRNN(nn.Module):
         else:
             self.out = nn.Linear(configuration['hidden_size']*2 , output_size)
         self.softmax = nn.LogSoftmax(dim=1)
-
+    #the input given to hidden layer is first embedded then dropout is performed and then passed though the relu activation layer
     def forward(self, input, hidden):
         
         output = self.dropout(self.embedding(input).view(1,self.batch_size, -1))
         output = F.relu(output)
+        #softmax is done on the output layer to get probability distribution between 0 to 1 based on cell type we return output,hidden 
         output, hidden = self.cell_layer(output, hidden)
         
         output = self.softmax(self.out(output[0]))
         return output, hidden
 
+    # if bidirection is applied then changing the dimension taking the average and passing that as output
     def initHidden(self):
         if (self.bidirectional==False):
             res = torch.zeros(self.num_layers_decoder , self.batch_size, self.hidden_size)
@@ -243,10 +252,11 @@ class DecoderRNN(nn.Module):
         else :
             return res
 
+# attndecoder class to take input as the output of the encoder and the produce one character at a time as output by giving weights to the output of the encoder class
 class AttnDecoder(nn.Module):
     def __init__(self, configuration, output_size, max_lengthWord):
         super(AttnDecoder, self).__init__()
-        
+        # parameter initilization
         self.hidden_size = configuration["hidden_size"]
         self.output_size = output_size
         self.embedding_size = configuration["embedding_size"]
@@ -300,7 +310,7 @@ class AttnDecoder(nn.Module):
         output = F.log_softmax(self.out(output[0]), dim=1)
         return output, hidden, attn_weights
         
-        
+# function creates and returns a list of indexes of each character of given word
 def indexesFromWord(lang, word):
     index_list = []
     i=0
@@ -312,7 +322,7 @@ def indexesFromWord(lang, word):
         i += 1
     return index_list
 
-
+# after creating the list of indexes of each character of a word the function adds padding to it
 def variableFromSentence(lang, word, max_length):
     indexes = indexesFromWord(lang, word)
     indexes.append(EOS_token)
@@ -323,6 +333,7 @@ def variableFromSentence(lang, word, max_length):
     else:
         return result
 
+# function creaters tensor for each input output pair in the dataset
 def variablesFromPairs(input_lang, output_lang, pairs, max_length):
     res = []
     i=0
@@ -335,7 +346,7 @@ def variablesFromPairs(input_lang, output_lang, pairs, max_length):
 
 teacher_forcing_ratio = 0.5
 
-
+# train function trains the model and returns the loss at each iteration of training
 def train(input_tensor, output_tensor, encoder, decoder,decoder_attn, encoder_optimizer, decoder_optimizer, criterion, configuration, max_length):
     batch_size = configuration['batch_size']
 
@@ -350,7 +361,7 @@ def train(input_tensor, output_tensor, encoder, decoder,decoder_attn, encoder_op
 
     encoder_optimizer.zero_grad()
     decoder_optimizer.zero_grad()
-
+    # if training with attention
     if configuration['attention']== True:
         encoder_outputs = Variable(torch.zeros(max_length +1, batch_size, encoder.hidden_size))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
@@ -405,10 +416,10 @@ def train(input_tensor, output_tensor, encoder, decoder,decoder_attn, encoder_op
 
     encoder_optimizer.step()
     decoder_optimizer.step()
-
+    # retruns loss at each wpoch
     return loss.item() / output_length
 
-
+# evaluate function is used to find the accuracy and loss for each epoch or training on the validation dataset
 def evaluate(encoder, decoder,decoder_attn, loader, configuration, criterion ,max_length,output_lang):
 
     batch_size = configuration['batch_size']
@@ -464,7 +475,7 @@ def evaluate(encoder, decoder,decoder_attn, loader, configuration, criterion ,ma
             j+=1
 
         output = output.transpose(0,1)
-
+        # finding accuracy
         k=0
         while(k < (output.size()[0])):
             ignore = [SOS_token, EOS_token, PAD_token]
@@ -478,9 +489,10 @@ def evaluate(encoder, decoder,decoder_attn, loader, configuration, criterion ,ma
             k+=1
         accuracy = (correct/total)*100
         loss += batch_loss.item()/target_length
-    
+    # returning loss and accuracy
     return accuracy, loss
 
+# this function takes as input a list of characters and creates string from the and return it
 def get_word(word1, word2, word3):
     output=[]
     s1=''
@@ -497,7 +509,7 @@ def get_word(word1, word2, word3):
     output.append(s3)
     return output
 
-
+# this function is used to find the test accuracy and test loss on the test dataset
 def evaluate_testset(encoder, decoder,decoder_attn, loader, configuration, criterion ,max_length,output_lang, input_lang):
 
     batch_size = configuration['batch_size']
@@ -554,7 +566,7 @@ def evaluate_testset(encoder, decoder,decoder_attn, loader, configuration, crite
 
         output = output.transpose(0,1)
 
-        k=0
+        z,k = 0,0
         while(k < (output.size()[0])):
             ignore = [SOS_token, EOS_token, PAD_token]
             x = [input_lang.index2char[letter.item()] for letter in batch_x[k] if letter not in ignore]
@@ -566,11 +578,20 @@ def evaluate_testset(encoder, decoder,decoder_attn, loader, configuration, crite
                 correct += 1
             total += 1
             k+=1
+#             if (z!=5):
+#                 print()
+#                 print("--------------------***------------------------")
+#                 print("Input Word : ",out[0])
+#                 print("Output Word : ",out[2])
+#                 print("predicted Word : ",out[1])
+#                 print("--------------------***------------------------")
+#                 z+=1
         accuracy = (correct/total)*100
         loss += batch_loss.item()/target_length
-    
+    # this function also returns the list of all the output words predicted
     return accuracy, loss, output_words
 
+# this function is used to find the test accuracy
 def test_accuracy(encoder, decoder,decoder_attn, test_loader, configuration, criterion,max_len_all, output_lang, input_lang):
 
     test_acc, test_loss, test_output = evaluate_testset(encoder, decoder,decoder_attn, test_loader, configuration, criterion,max_len_all,output_lang, input_lang)
@@ -589,7 +610,7 @@ def test_accuracy(encoder, decoder,decoder_attn, test_loader, configuration, cri
 #     for k in range(len(test_output)):
 #         print(test_output[k])
 
-
+# this function has all the structure of the code and is used to train the model as well is evaluate it onthe validation as well as test set
 def trainIters(encoder, decoder,decoder_attn, train_loader, val_loader,test_loader, configuration, max_len_all, output_lang, input_lang):
 
     encoder_optimizer = optim.NAdam(encoder.parameters(),lr=configuration['learning_rate'])
@@ -618,12 +639,13 @@ def trainIters(encoder, decoder,decoder_attn, train_loader, val_loader,test_load
         print('validation loss :', validation_loss/len(val_loader))
         print("val_accuracy : ",validation_accuracy)
         i+=1
-#         wandb.log({'validation_loss': validation_loss/len(val_loader), 'validation_accuracy': validation_accuracy, 'train_loss': train_loss/len(train_loader)})
+        # uncomment the line below to run the sweep on wandb
+        #wandb.log({'validation_loss': validation_loss/len(val_loader), 'validation_accuracy': validation_accuracy, 'train_loss': train_loss/len(train_loader)})
         print()
     print("--------------------***------------------------")
     test_accuracy(encoder, decoder, decoder_attn, test_loader, configuration, criterion, max_len_all, output_lang, input_lang)
 
-
+# this function is used to run the sweep on wandb
 def sweepfunction():
     config = None
     
@@ -690,42 +712,43 @@ def sweepfunction():
             trainIters(encoder1, decoder1, decoder_attn, train_loader, val_loader,test_loader, configuration, max_len_all, test_output_lang, test_input_lang)
         else:
             trainIters(encoder1, decoder1, decoder_attn, train_loader, val_loader,test_loader, configuration, max_len_all,test_output_lang, test_input_lang)
-
+# uncomment this function and the sweep configuration on top of the code to run sweep on wandb
 # wandb.agent(sweep_id, sweepfunction, count = 50)
 
+# this function is used to run the best configuration obtained on the validation dataset 
 def final_run():
     
-        configuration = {
-            "hidden_size" : 512,
-            "input_lang" : 'eng',
-            "output_lang" : 'hin',
-            "cell_type"   : 'LSTM',
-            "num_layers_encoder" : 2 ,
-            "num_layers_decoder" : 2,
-            "drop_out"    : 0.2, 
-            "embedding_size" : 128,
-            "bi_directional" : True,
-            "batch_size" : 32,
-            "attention" : False ,
-            "learning_rate" : 0.001,
-    
-        }
         # configuration = {
+        #     "hidden_size" : 512,
+        #     "input_lang" : 'eng',
+        #     "output_lang" : 'hin',
+        #     "cell_type"   : 'LSTM',
+        #     "num_layers_encoder" : 2 ,
+        #     "num_layers_decoder" : 2,
+        #     "drop_out"    : 0.2, 
+        #     "embedding_size" : 128,
+        #     "bi_directional" : True,
+        #     "batch_size" : 32,
+        #     "attention" : False ,
+        #     "learning_rate" : 0.001,
+    
+        # }
+        configuration = {
 
-        #         'hidden_size'         : hidden_size,
-        #         'input_lang'          : input_lang,
-        #         'output_lang'         : output_lang,
-        #         'cell_type'           : cell_type,
-        #         'num_layers_encoder'  : num_layers_encoder,
-        #         'num_layers_decoder'  : num_layers_encoder,
-        #         'drop_out'            : drop_out, 
-        #         'embedding_size'      : embedding_size,
-        #         'bi_directional'      : bidirectional,
-        #         'batch_size'          : batch_size,
-        #         'attention'           : attention,
-        #         'learning_rate'       : learning_rate,
+                'hidden_size'         : hidden_size,
+                'input_lang'          : input_lang,
+                'output_lang'         : output_lang,
+                'cell_type'           : cell_type,
+                'num_layers_encoder'  : num_layers_encoder,
+                'num_layers_decoder'  : num_layers_encoder,
+                'drop_out'            : drop_out, 
+                'embedding_size'      : embedding_size,
+                'bi_directional'      : bidirectional,
+                'batch_size'          : batch_size,
+                'attention'           : attention,
+                'learning_rate'       : learning_rate,
 
-        #     }
+            }
 
 
         
@@ -772,5 +795,5 @@ def final_run():
             trainIters(encoder1, decoder1,decoder_attn, train_loader, val_loader,test_loader, configuration, max_len_all, test_output_lang, test_input_lang)
         else:
             trainIters(encoder1, decoder1,decoder_attn, train_loader, val_loader,test_loader, configuration, max_len_all, test_output_lang, test_input_lang)
-
+# final_run called to run the best configuration
 final_run()
