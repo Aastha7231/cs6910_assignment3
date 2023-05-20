@@ -9,6 +9,7 @@ Assignment 3 of the course CS6910: Fundamentals of Deep Learning offered at IIT 
 * The function train_iters() takes various parameters as input from the configuration dictionary and trains the model for 10 epochs by calling the train() function. 
 * The train function returns the loss after training the model at each epoch.
 * The model is then evaluated on the validation dataset using the evaluate function at each epoch.
+* Reference- https://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html
 
 ## Evaluate the Best Model
 * After running the sweep with and without attention as mentioned in the report the best configuration obtained is :\
