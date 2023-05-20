@@ -37,6 +37,8 @@ The folder predictions_vanilla contains a file predictions_vanilla.csv that cont
 The folder predictions_attention contains a file predictions_attention.csv that contains the input words, predicted words in hindi and also the actual output in hindi for the english word. This is obtained when the code is executed with attention.
 
 ## Sweep Configuration Used
-
+The following configuration is used to run the sweep on wandb.\
+Inorder to run the sweep on wandb uncomment the sweep configuration in the code and also uncomment the call to sweepfunction() in the code .\
 ![Screenshot (199)](https://github.com/Aastha7231/cs6910_assignment3/assets/126596782/33e37d6e-f9bf-4b42-a72a-058c4ab92144)
+
 
