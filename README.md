@@ -41,4 +41,7 @@ The following configuration is used to run the sweep on wandb.\
 Inorder to run the sweep on wandb uncomment the sweep configuration in the code and also uncomment the call to sweepfunction() in the code .\
 ![Screenshot (199)](https://github.com/Aastha7231/cs6910_assignment3/assets/126596782/33e37d6e-f9bf-4b42-a72a-058c4ab92144)
 
+#### Wandb Report Link 
+The link to wandb report for the assignment is:\
+https://wandb.ai/cs22m005/dlasg3/reports/CS6910-Assignment-3--Vmlldzo0Mzk4Mzc3
 
