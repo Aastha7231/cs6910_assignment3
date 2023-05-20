@@ -13,19 +13,25 @@ Assignment 3 of the course CS6910: Fundamentals of Deep Learning offered at IIT 
 ### Evaluate the Best Model
 * After running the sweep with and without attention as mentioned in the report the best configuration obtained is :\
    configuration = {\
-             |   "hidden_size" : 512,\
-             |   "input_lang" : 'eng',\
-             |   "output_lang" : 'hin',\
-             |   "cell_type"   : 'LSTM',\
-             |   "num_layers_encoder" : 2,\
-             |   "num_layers_decoder" : 2,\
-             |   "drop_out"    : 0.2,\ 
-             |   "embedding_size" : 128,\
-             |   "bi_directional" : True,\
-             |   "batch_size" : 32,\
-             |   "attention" : False ,\
-             |   "learning_rate" : 0.001,\
+                "hidden_size" : 512,\
+                "input_lang" : 'eng',\
+                "output_lang" : 'hin',\
+                "cell_type"   : 'LSTM',\
+                "num_layers_encoder" : 2,\
+                "num_layers_decoder" : 2,\
+                "drop_out"    : 0.2,\ 
+                "embedding_size" : 128,\
+                "bi_directional" : True,\
+                "batch_size" : 32,\
+                "attention" : False ,\
+                "learning_rate" : 0.001,\
          }
+* The function evaluate_testset is run to find test accuracy for best model configuration.
 * The best accuracy obtained on validation set is - 38.94% 
-* The best accuracu obtained on test dataset is -36.92%  and loss - 0.3086
-* 
+* The best accuracy obtained on test dataset is -36.92%  and loss - 0.3086
+
+### Predictions_Vanilla
+The folder predictions_vanilla contains a file predictions_vanilla.csv that contains the input words, predicted words in hindi and also the actual output in hindi for the english word. This is obtained when the code is executed without attention.
+
+#### Predictions_attention
+The folder predictions_attention contains a file predictions_attention.csv that contains the input words, predicted words in hindi and also the actual output in hindi for the english word. This is obtained when the code is executed with attention.
