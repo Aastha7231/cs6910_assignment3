@@ -11,8 +11,8 @@ Assignment 3 of the course CS6910: Fundamentals of Deep Learning offered at IIT 
 * The model is then evaluated on the validation dataset using the evaluate function at each epoch.
 
 ### Evaluate the Best Model
-* After running the sweep with and without attention as mentioned in the report the best configuration obtained is :
-*  configuration = {\
+* After running the sweep with and without attention as mentioned in the report the best configuration obtained is :\
+   configuration = {\
             "hidden_size" : 512,\
             "input_lang" : 'eng',\
             "output_lang" : 'hin',\
@@ -26,3 +26,6 @@ Assignment 3 of the course CS6910: Fundamentals of Deep Learning offered at IIT 
             "attention" : False ,\
             "learning_rate" : 0.001,\
          }
+* The best accuracy obtained on validation set is - 38.94% \
+* The best accuracu obtained on test dataset is -36.92%  and loss - 0.3086\
+* 
