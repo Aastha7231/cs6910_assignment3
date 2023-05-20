@@ -49,7 +49,7 @@ attention             = args.attention
 
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
+
 
 SOS_token = 0
 EOS_token = 1
@@ -58,7 +58,8 @@ lang_2 = 'hin'
 UNK_token = 3
 PAD_token = 4
 
-dir = '/kaggle/input/dataset/aksharantar_sampled'
+dir = 'aksharantar_sampled'
+
 # sweep configuration used to run sweep
 
 # sweep_config ={
@@ -712,6 +713,7 @@ def sweepfunction():
             trainIters(encoder1, decoder1, decoder_attn, train_loader, val_loader,test_loader, configuration, max_len_all, test_output_lang, test_input_lang)
         else:
             trainIters(encoder1, decoder1, decoder_attn, train_loader, val_loader,test_loader, configuration, max_len_all,test_output_lang, test_input_lang)
+
 # uncomment this function and the sweep configuration on top of the code to run sweep on wandb
 # wandb.agent(sweep_id, sweepfunction, count = 50)
 
@@ -733,6 +735,27 @@ def final_run():
         #     "learning_rate" : 0.001,
     
         # }
+
+        # data preprocessing by fetching the data from the dir and then converting it into pairs
+        train_path = os.path.join(dir, lang_2, lang_2 + '_train.csv')
+        validation_path = os.path.join(dir, lang_2, lang_2 + '_valid.csv')
+        test_path = os.path.join(dir, lang_2, lang_2 + '_test.csv')
+        
+        input_lang, output_lang, pairs, max_input_length, max_target_length = prepareData(train_path, lang_1, lang_2)
+        val_input_lang, val_output_lang, val_pairs, max_input_length_val, max_target_length_val = prepareData(validation_path, lang_1, lang_2)
+        test_input_lang, test_output_lang, test_pairs, max_input_length_test, max_target_length_test = prepareData(test_path, lang_1, lang_2)
+        print(random.choice(pairs))
+
+
+        max_list = [max_input_length, max_target_length, max_input_length_val, max_target_length_val, max_input_length_test, max_target_length_test]
+
+        max_len_all = 0
+        for i in range(len(max_list)):
+            if(max_list[i] > max_len_all):
+                max_len_all = max_list[i]
+        max_len_all+=1
+
+        # configuration taken from argparse
         configuration = {
 
                 'hidden_size'         : hidden_size,
@@ -749,28 +772,7 @@ def final_run():
                 'learning_rate'       : learning_rate,
 
             }
-
-
-        
-        train_path = os.path.join(dir, lang_2, lang_2 + '_train.csv')
-        validation_path = os.path.join(dir, lang_2, lang_2 + '_valid.csv')
-        test_path = os.path.join(dir, lang_2, lang_2 + '_test.csv')
-        
-        input_lang, output_lang, pairs, max_input_length, max_target_length = prepareData(train_path, lang_1, lang_2)
-        val_input_lang, val_output_lang, val_pairs, max_input_length_val, max_target_length_val = prepareData(validation_path, lang_1, lang_2)
-        test_input_lang, test_output_lang, test_pairs, max_input_length_test, max_target_length_test = prepareData(test_path, lang_1, lang_2)
-        print(random.choice(pairs))
-
-        
-
-        max_list = [max_input_length, max_target_length, max_input_length_val, max_target_length_val, max_input_length_test, max_target_length_test]
-
-        max_len_all = 0
-        for i in range(len(max_list)):
-            if(max_list[i] > max_len_all):
-                max_len_all = max_list[i]
-        max_len_all+=1
-
+        # converting the pairs into tensor
         pairs = variablesFromPairs(test_input_lang, test_output_lang, pairs, max_len_all)
         val_pairs = variablesFromPairs(test_input_lang, test_output_lang, val_pairs, max_len_all)
         test_pairs = variablesFromPairs(test_input_lang, test_output_lang, test_pairs, max_len_all)
@@ -787,6 +789,7 @@ def final_run():
         if use_cuda:
             decoder_attn = decoder_attn.cuda()
 
+        # creating batches using dataloader
         train_loader = torch.utils.data.DataLoader(pairs, batch_size = configuration['batch_size'], shuffle=True)
         val_loader = torch.utils.data.DataLoader(val_pairs, batch_size = configuration['batch_size'], shuffle=True)
         test_loader = torch.utils.data.DataLoader(test_pairs, batch_size = configuration['batch_size'], shuffle=True)
@@ -795,5 +798,6 @@ def final_run():
             trainIters(encoder1, decoder1,decoder_attn, train_loader, val_loader,test_loader, configuration, max_len_all, test_output_lang, test_input_lang)
         else:
             trainIters(encoder1, decoder1,decoder_attn, train_loader, val_loader,test_loader, configuration, max_len_all, test_output_lang, test_input_lang)
+
 # final_run called to run the best configuration
 final_run()
