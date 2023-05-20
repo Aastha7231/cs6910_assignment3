@@ -10,5 +10,20 @@ Assignment 3 of the course CS6910: Fundamentals of Deep Learning offered at IIT 
 * The train function returns the loss after training the model at each epoch.
 * The model is then evaluated on the validation dataset using the evaluate function at each epoch.
 
-
-
+### Evaluate the Best Model
+* After running the sweep with and without attention as mentioned in the report the best configuration obtained is :
+*  configuration = {
+            "hidden_size" : 512,__
+            "input_lang" : 'eng',_
+            "output_lang" : 'hin',
+            "cell_type"   : 'LSTM',
+            "num_layers_encoder" : 2 ,
+            "num_layers_decoder" : 2,
+            "drop_out"    : 0.2, 
+            "embedding_size" : 128,
+            "bi_directional" : True,
+            "batch_size" : 32,
+            "attention" : False ,
+            "learning_rate" : 0.001,
+    
+         }
